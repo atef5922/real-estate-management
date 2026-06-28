@@ -42,8 +42,19 @@ function NavDropdown({
   active: boolean;
   pathname: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const [currentSearch, setCurrentSearch] = useState("");
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+
+    if (nextOpen && typeof window !== "undefined") {
+      setCurrentSearch(window.location.search.replace(/^\?/, ""));
+    }
+  };
+
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root open={open} onOpenChange={handleOpenChange}>
       <DropdownMenu.Trigger
         className={cn(
           "group relative inline-flex h-10 items-center gap-1 rounded-sm px-3 text-sm font-semibold tracking-[0.01em] text-navy-950 outline-none transition-all duration-200 hover:text-gold-500 data-[state=open]:text-gold-500",
@@ -72,8 +83,16 @@ function NavDropdown({
           </div>
           {links.map((link) => {
             const linkPath = link.href.split("?")[0];
+            const linkQuery = link.href.split("?")[1] ?? "";
             const isCurrentLink =
-              label === "Pages" && (pathname === linkPath || pathname.startsWith(`${linkPath}/`));
+              label === "Pages"
+                ? pathname === linkPath || pathname.startsWith(`${linkPath}/`)
+                : label === "Properties" &&
+                  pathname === linkPath &&
+                  linkQuery.length > 0 &&
+                  Array.from(new URLSearchParams(linkQuery).entries()).every(
+                    ([key, value]) => new URLSearchParams(currentSearch).get(key) === value
+                  );
 
             return (
               <DropdownMenu.Item key={link.label} asChild>
@@ -155,7 +174,7 @@ function isDirectNavActive(pathname: string, href: string) {
 export function MainNavbar() {
   const pathname = usePathname();
   const { wishlist, compare } = usePropertyState();
-  const pagesActive = pageLinks.some((link) => {
+  const pagesActive = pathname === "/faq" || pageLinks.some((link) => {
     const linkPath = link.href.split("?")[0];
     return pathname === linkPath || pathname.startsWith(`${linkPath}/`);
   });

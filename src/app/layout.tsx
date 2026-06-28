@@ -6,6 +6,7 @@ import { TopNavbar } from "@/components/layout/TopNavbar";
 import { PropertyStateProvider } from "@/components/providers/PropertyStateProvider";
 import { ScrollProgress } from "@/components/common/ScrollProgress";
 import { InitialLoadCard } from "@/components/common/InitialLoadCard";
+import { FloatingActions } from "@/components/common/FloatingActions";
 import { siteConfig } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -63,6 +64,7 @@ export default function RootLayout({
             <MainNavbar />
           </header>
           <main>{children}</main>
+          <FloatingActions />
           <Footer />
         </PropertyStateProvider>
       </body>

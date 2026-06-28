@@ -37,7 +37,6 @@ export const propertyMenuItems = [
 
 export const pageLinks = [
   { label: "About Us", href: "/about" },
-  { label: "FAQ", href: "/faq" },
   { label: "Gallery", href: "/gallery" },
   { label: "Compare Properties", href: "/compare" },
   { label: "Saved Properties", href: "/wishlist" },
