@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { type FocusEvent, type FormEvent, type PointerEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -42,36 +42,110 @@ function NavDropdown({
   active: boolean;
   pathname: string;
 }) {
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const closeTimerRef = useRef<number | null>(null);
   const [open, setOpen] = useState(false);
   const [currentSearch, setCurrentSearch] = useState("");
 
-  const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
 
-    if (nextOpen && typeof window !== "undefined") {
+  const syncSearch = () => {
+    if (typeof window !== "undefined") {
       setCurrentSearch(window.location.search.replace(/^\?/, ""));
     }
   };
 
+  const openMenu = () => {
+    clearCloseTimer();
+    syncSearch();
+    setOpen(true);
+  };
+
+  const closeMenu = () => {
+    clearCloseTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      setOpen(false);
+      closeTimerRef.current = null;
+    }, 120);
+  };
+
+  const isWithinInteractiveArea = (target: EventTarget | null) => {
+    if (!(target instanceof Node)) {
+      return false;
+    }
+
+    return Boolean(triggerRef.current?.contains(target) || contentRef.current?.contains(target));
+  };
+
+  const handlePointerLeave = (event: PointerEvent<HTMLElement>) => {
+    if (isWithinInteractiveArea(event.relatedTarget)) {
+      clearCloseTimer();
+      return;
+    }
+
+    closeMenu();
+  };
+
+  const handleBlurCapture = (event: FocusEvent<HTMLElement>) => {
+    if (!isWithinInteractiveArea(event.relatedTarget)) {
+      clearCloseTimer();
+      setOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current !== null) {
+        window.clearTimeout(closeTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    clearCloseTimer();
+    setOpen(nextOpen);
+
+    if (nextOpen) {
+      syncSearch();
+    }
+  };
+
   return (
-    <DropdownMenu.Root open={open} onOpenChange={handleOpenChange}>
+    <DropdownMenu.Root modal={false} open={open} onOpenChange={handleOpenChange}>
       <DropdownMenu.Trigger
+        ref={triggerRef}
         className={cn(
           "group relative inline-flex h-10 items-center gap-1 rounded-sm px-3 text-sm font-semibold tracking-[0.01em] text-navy-950 outline-none transition-all duration-200 hover:text-gold-500 data-[state=open]:text-gold-500",
           "before:absolute before:inset-x-2 before:top-0 before:h-px before:rounded-full before:bg-gold-400 before:opacity-0 before:transition",
           "after:absolute after:left-1/2 after:top-full after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:rotate-45 after:bg-navy-850 after:opacity-0 after:transition",
           active && "bg-navy-850 text-white shadow-[0_8px_18px_rgba(6,26,45,0.14)] hover:text-white data-[state=open]:text-white before:opacity-100 after:opacity-100"
         )}
+        onFocus={openMenu}
+        onPointerEnter={openMenu}
+        onPointerLeave={handlePointerLeave}
+        onBlurCapture={handleBlurCapture}
       >
         {label}
-        <ChevronDown className="h-4 w-4 transition group-data-[state=open]:rotate-180" />
+        <ChevronDown className="h-4 w-4 transition duration-200 group-data-[state=open]:rotate-180" />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
+          ref={contentRef}
           align="center"
-          sideOffset={18}
+          sideOffset={12}
           collisionPadding={18}
-          className="premium-menu-content z-[120] w-72 overflow-hidden rounded-lg border border-borderSoft bg-white/[0.98] p-2 shadow-premium backdrop-blur-xl"
+          className="premium-menu-content z-[120] w-72 overflow-hidden rounded-lg border border-borderSoft bg-white/[0.98] p-2 shadow-premium backdrop-blur-xl before:absolute before:inset-x-0 before:-top-3 before:h-3 before:content-['']"
+          onPointerEnter={openMenu}
+          onPointerLeave={handlePointerLeave}
+          onCloseAutoFocus={(event) => event.preventDefault()}
+          onEscapeKeyDown={() => setOpen(false)}
+          onBlurCapture={handleBlurCapture}
         >
           <div className="border-b border-borderSoft px-3 py-3">
             <p className="text-[11px] font-black uppercase tracking-[0.22em] text-gold-500">

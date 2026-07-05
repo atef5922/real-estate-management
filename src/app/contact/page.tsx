@@ -51,7 +51,7 @@ export default function ContactPage() {
           <div className="grid min-h-[360px] place-items-center rounded-lg border border-borderSoft bg-[linear-gradient(135deg,rgba(201,151,63,.18),rgba(6,26,45,.08)),url('https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1400&q=80')] bg-cover bg-center text-center shadow-sm">
             <div className="rounded-lg bg-white/92 p-6 shadow-premium backdrop-blur">
               <MapPin className="mx-auto h-8 w-8 text-gold-500" />
-              <p className="mt-3 font-heading text-3xl font-semibold text-slateText">Gulshan Avenue, Dhaka</p>
+              <p className="mt-3 font-heading text-3xl font-semibold text-slateText">{siteConfig.address}</p>
               <p className="mt-2 text-sm text-mutedText">Google Map placeholder ready for future embed.</p>
             </div>
           </div>

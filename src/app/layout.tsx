@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "@/app/globals.css";
 import { Footer } from "@/components/layout/Footer";
 import { MainNavbar } from "@/components/layout/MainNavbar";
@@ -8,6 +9,18 @@ import { ScrollProgress } from "@/components/common/ScrollProgress";
 import { InitialLoadCard } from "@/components/common/InitialLoadCard";
 import { FloatingActions } from "@/components/common/FloatingActions";
 import { siteConfig } from "@/lib/constants";
+
+const headingFont = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-heading"
+});
+
+const bodyFont = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-body"
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -47,15 +60,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body suppressHydrationWarning>
+      <body className={`${headingFont.variable} ${bodyFont.variable}`} suppressHydrationWarning>
         <PropertyStateProvider>
           <InitialLoadCard />
           <ScrollProgress />

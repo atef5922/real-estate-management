@@ -5,10 +5,10 @@ export const siteConfig = {
   description:
     "Discover premium apartments, villas, land, and commercial properties across Bangladesh with trusted advisors, verified listings, and concierge support.",
   url: "https://dream-habitat-realty.vercel.app",
-  phone: "+880 17 1234 5678",
-  whatsapp: "https://wa.me/8801712345678",
+  phone: "+880 1958-645415",
+  whatsapp: "https://wa.me/8801958645415",
   email: "info@dreamhabitat.com",
-  address: "Gulshan Avenue, Dhaka, Bangladesh",
+  address: "3rd Floor, 36-37 Umesh Datta Road, Bakshibazar, Dhaka - 1211, Bangladesh",
   hours: "Mon - Sat: 9:00 AM - 8:00 PM",
   ogImage:
     "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
